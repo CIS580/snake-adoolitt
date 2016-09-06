@@ -94,7 +94,7 @@ function update(elapsedTime) {
     snake_array.unshift(tail); //puts back the tail as the first cell
 
   // TODO: Determine if the snake has eaten its tail
-  if(nx == -1 || nx == w/cell_width || ny == -1 || ny == h/cell_width || check_collision(nx, ny, snake_array))
+  if(nx == -1 || nx == canvas.width/cell_width || ny == -1 || ny == canvas.height/cell_width || check_collision(nx, ny, snake_array))
 		{
 			//create game over
       gameOver = true;
@@ -114,8 +114,18 @@ function render(elapsedTime) {
   backCtx.clearRect(0, 0, backBuffer.width, backBuffer.height);
 
   // TODO: Draw the game objects into the backBuffer
-  backCtx.fillStyle = "red";
-	backCtx.fillRect(x,y,5,5);
+  for(var i = 0; i < snake_array.length; i++)
+		{
+			var c = snake_array[i];
+			//Lets paint 10px wide cells
+			paint_cell(c.x, c.y);
+		}
+
+		//Lets paint the food
+		paint_cell(food.x, food.y);
+		//Lets paint the score
+		var score_text = "Score: " + score;
+		backCtx.fillText(score_text, 5, canvas.height - 5);
 }
 
 /* Launch the game */
@@ -210,10 +220,19 @@ window.onkeyup = function(event)
   function create_food()
 	{
 		food = {
-			x: Math.round(Math.random()*(w-cw)),
-			y: Math.round(Math.random()*(h-cw)),
+			x: Math.round(Math.random()*(canvas.weidth-cell_width)),
+			y: Math.round(Math.random()*(canvas.height-cell_wdith)),
 		};
 		//This will create a cell with x/y between 0-the width of canvas
+	}
+
+  //Generic function to paint cells
+	function paint_cell(x, y)
+	{
+		ctx.fillStyle = "blue";
+		ctx.fillRect(x*cell_width, y*cell_width, cell_width, cell_width);
+		ctx.strokeStyle = "white";
+		ctx.strokeRect(x*cell_width, y*cell_width, cell_width, cell_width);
 	}
 
   function check_collision(x, y, array)
