@@ -10,7 +10,7 @@ var oldTime = performance.now();
 var periodicall_Timer = 0;
 var growSnake = false;
 var speed = 1/16/1000;
-var cell_width 10;
+var cell_width = 10;
 var score = 0;
 var snake_array;
 var food;
@@ -128,8 +128,7 @@ function render(elapsedTime) {
 		backCtx.fillText(score_text, 5, canvas.height - 5);
 }
 
-/* Launch the game */
-window.requestAnimationFrame(loop);
+
 
 var input = {
 	up: false,
@@ -205,45 +204,53 @@ window.onkeyup = function(event)
 			input.right = false;
 			break;
 	}
+}
 
-  function create_snake()
+function create_snake()
+{
+	var length = 5; //Length of the snake
+	snake_array = []; //Empty array to start with
+	for(var i = length-1; i>=0; i--)
 	{
-		var length = 5; //Length of the snake
-		snake_array = []; //Empty array to start with
-		for(var i = length-1; i>=0; i--)
-		{
-			//This will create a horizontal snake starting from the top left
-			snake_array.push({x: i, y:0});
-		}
-	}
-
-  function create_food()
-	{
-		food = {
-			x: Math.round(Math.random()*(canvas.weidth-cell_width)),
-			y: Math.round(Math.random()*(canvas.height-cell_wdith)),
-		};
-		//This will create a cell with x/y between 0-the width of canvas
-	}
-
-  //Generic function to paint cells
-	function paint_cell(x, y)
-	{
-		ctx.fillStyle = "blue";
-		ctx.fillRect(x*cell_width, y*cell_width, cell_width, cell_width);
-		ctx.strokeStyle = "white";
-		ctx.strokeRect(x*cell_width, y*cell_width, cell_width, cell_width);
-	}
-
-  function check_collision(x, y, array)
-	{
-		//This function will check if the provided x/y coordinates exist
-		//in an array of cells or not
-		for(var i = 0; i < array.length; i++)
-		{
-			if(array[i].x == x && array[i].y == y)
-			 return true;
-		}
-		return false;
+		//This will create a horizontal snake starting from the top left
+		snake_array.push({x: i, y:0});
 	}
 }
+
+function create_food()
+{
+	food = {
+		x: Math.round(Math.random()*(canvas.weidth-cell_width)),
+		y: Math.round(Math.random()*(canvas.height-cell_wdith)),
+	};
+	//This will create a cell with x/y between 0-the width of canvas
+}
+
+//Generic function to paint cells
+function paint_cell(x, y)
+{
+	ctx.fillStyle = "blue";
+	ctx.fillRect(x*cell_width, y*cell_width, cell_width, cell_width);
+	ctx.strokeStyle = "white";
+	ctx.strokeRect(x*cell_width, y*cell_width, cell_width, cell_width);
+}
+
+function check_collision(x, y, array)
+{
+	//This function will check if the provided x/y coordinates exist
+	//in an array of cells or not
+	for(var i = 0; i < array.length; i++)
+	{
+		if(array[i].x == x && array[i].y == y)
+		 return true;
+	}
+	return false;
+}
+
+
+  create_snake();
+
+
+
+/* Launch the game */
+window.requestAnimationFrame(loop);
