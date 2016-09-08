@@ -23,6 +23,7 @@ var gameOver = false
  * @param{time} the current time as a DOMHighResTimeStamp
  */
 function loop(newTime) {
+  console.log("gameover", gameOver);
   if(!gameOver)
   {
     var elapsedTime = newTime - oldTime;
@@ -47,40 +48,44 @@ function loop(newTime) {
  * the number of milliseconds passed since the last frame.
  */
 function update(elapsedTime) {
+  console.log("update");
   periodicall_Timer += elapsedTime;
 
   var nx = snake_array[0].x;
   var ny = snake_array[0].y;
 
   // TODO: Spawn an apple periodically
-  if(periodicall_Timer >= 300)
+  if(periodicall_Timer >= 30000)
   {
     create_food();
     periodicall_Timer = 0;
   }
   // TODO: Move the snake
-  if(input.up) ny =-1;
-	else if(input.down) ny += 1;
-	else if(input.right) nx += 1;
-	else if(input.left) nx -= 1;
+  switch(d) {
+    case "up": ny -= 1; break;
+    case "down": ny += 1; break;
+    case "left": nx -= 1; break;
+    case "right": nx += 1; break;
+  }
 
   // TODO: Determine if the snake has moved out-of-bounds (offscreen)
-  if(nx >= frontBuffer.width && ny >= frontBuffer.height && nx < 0 && ny < 0)
+  if(nx >= frontBuffer.width / 10 || ny >= frontBuffer.height / 10 || nx < 0 || ny < 0)
   {
     console.log("out of bounds");
     gameOver = true;
   }
   // TODO: Determine if the snake has eaten an apple
   if(nx == food.x && ny == food.y)
-		{
-			score += 10;
-      growSnake = true;
-		}
-    else
-    {
-      var tail = snake_array.pop(); //pops out the last cell
-      tail.x = nx; tail.y = ny;
-    }
+	{
+		score += 10;
+    growSnake = true;
+	}
+  else
+  {
+    console.log("moving");
+    var tail = snake_array.pop(); //pops out the last cell
+    tail.x = nx; tail.y = ny;
+  }
 
     // TODO: Grow the snake periodically
     if(growSnake)
@@ -89,17 +94,18 @@ function update(elapsedTime) {
       growSnake = false;
     }
 
-    snake_array.unshift(tail); //puts back the tail as the first cell
 
   // TODO: Determine if the snake has eaten its tail
-  if(nx == -1 || nx == frontBuffer.width/cell_width || ny == -1 || ny == frontBuffer.height/cell_width || check_collision(nx, ny, snake_array))
+  if(check_collision(nx, ny, snake_array))
 		{
+      console.log("ate my tail");
 			//create game over
       gameOver = true;
 
 		}
   // TODO: [Extra Credit] Determine if the snake has run into an obstacle
 
+      snake_array.unshift(tail); //puts back the tail as the first cell
 }
 
 /**
@@ -109,21 +115,23 @@ function update(elapsedTime) {
   * the number of milliseconds passed since the last frame.
   */
 function render(elapsedTime) {
-  backCtx.clearRect(0, 0, backBuffer.width, backBuffer.height);
+  backCtx.fillStyle = "white";
+  backCtx.fillRect(0, 0, backBuffer.width, backBuffer.height);
 
   // TODO: Draw the game objects into the backBuffer
   for(var i = 0; i < snake_array.length; i++)
-		{
+	{
 			var c = snake_array[i];
 			//Lets paint 10px wide cells
 			paint_cell(c.x, c.y);
-		}
+      console.log(c);
+	}
 
-		//Lets paint the food
-		paint_cell(food.x, food.y);
-		//Lets paint the score
-		var score_text = "Score: " + score;
-		backCtx.fillText(score_text, 5, backBuffer.height - 5);
+	//Lets paint the food
+	paint_cell(food.x, food.y);
+	//Lets paint the score
+	var score_text = "Score: " + score;
+	backCtx.fillText(score_text, 5, backBuffer.height - 5);
 }
 
 
@@ -233,8 +241,8 @@ function paint_cell(x, y)
 {
 	backCtx.fillStyle = "blue";
 	backCtx.fillRect(x*cell_width, y*cell_width, cell_width, cell_width);
-	backCtx.strokeStyle = "white";
-	backCtx.strokeRect(x*cell_width, y*cell_width, cell_width, cell_width);
+	//backCtx.strokeStyle = "white";
+	//backCtx.strokeRect(x*cell_width, y*cell_width, cell_width, cell_width);
 }
 
 function check_collision(x, y, array)
@@ -249,7 +257,7 @@ function check_collision(x, y, array)
 	return false;
 }
 
-
+  create_food();
   create_snake();
 
 
