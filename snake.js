@@ -14,7 +14,7 @@ var cell_width = 10;
 var score = 0;
 var snake_array;
 var food;
-var d;
+var d = "right";
 var gameOver = false
 
 /**
@@ -53,7 +53,7 @@ function update(elapsedTime) {
   var ny = snake_array[0].y;
 
   // TODO: Spawn an apple periodically
-  if(periodicall_Timer >= 30)
+  if(periodicall_Timer >= 300)
   {
     create_food();
     periodicall_Timer = 0;
@@ -68,8 +68,9 @@ function update(elapsedTime) {
 	frontCtx.fillRect(nx,ny,5,5);
 
   // TODO: Determine if the snake has moved out-of-bounds (offscreen)
-  if(nx >= canvas.width && ny >= canvas.height && nx < 0 && ny < 0)
+  if(nx >= frontBuffer.width && ny >= frontBuffer.height && nx < 0 && ny < 0)
   {
+    console.log("out of bounds");
     gameOver = true;
   }
   // TODO: Determine if the snake has eaten an apple
@@ -94,7 +95,7 @@ function update(elapsedTime) {
     snake_array.unshift(tail); //puts back the tail as the first cell
 
   // TODO: Determine if the snake has eaten its tail
-  if(nx == -1 || nx == canvas.width/cell_width || ny == -1 || ny == canvas.height/cell_width || check_collision(nx, ny, snake_array))
+  if(nx == -1 || nx == frontBuffer.width/cell_width || ny == -1 || ny == frontBuffer.height/cell_width || check_collision(nx, ny, snake_array))
 		{
 			//create game over
       gameOver = true;
@@ -125,7 +126,7 @@ function render(elapsedTime) {
 		paint_cell(food.x, food.y);
 		//Lets paint the score
 		var score_text = "Score: " + score;
-		backCtx.fillText(score_text, 5, canvas.height - 5);
+		backCtx.fillText(score_text, 5, backBuffer.height - 5);
 }
 
 
@@ -147,6 +148,7 @@ window.onkeydown = function(event)
 		case 87:
           if(d !=  "down")
           {
+               d = "up";
 			         input.up = true;
           }
 			break;
@@ -155,6 +157,7 @@ window.onkeydown = function(event)
 		case 65:
          if(d != "right")
          {
+              d = "left";
 			        input.left = true;
          }
 			break;
@@ -163,6 +166,7 @@ window.onkeydown = function(event)
 		case 68:
          if(d != "up")
          {
+              d = "down";
 			        input.down = true;
          }
 			break;
@@ -171,6 +175,7 @@ window.onkeydown = function(event)
 		case 68:
          if(d != "left")
          {
+              d = "right";
 			        input.right = true;
          }
 			break;
@@ -220,8 +225,8 @@ function create_snake()
 function create_food()
 {
 	food = {
-		x: Math.round(Math.random()*(canvas.weidth-cell_width)),
-		y: Math.round(Math.random()*(canvas.height-cell_wdith)),
+		x: Math.round(Math.random()*(frontBuffer.weidth-cell_width)),
+		y: Math.round(Math.random()*(frontBuffer.height-cell_width)),
 	};
 	//This will create a cell with x/y between 0-the width of canvas
 }
@@ -229,10 +234,10 @@ function create_food()
 //Generic function to paint cells
 function paint_cell(x, y)
 {
-	ctx.fillStyle = "blue";
-	ctx.fillRect(x*cell_width, y*cell_width, cell_width, cell_width);
-	ctx.strokeStyle = "white";
-	ctx.strokeRect(x*cell_width, y*cell_width, cell_width, cell_width);
+	backCtx.fillStyle = "blue";
+	backCtx.fillRect(x*cell_width, y*cell_width, cell_width, cell_width);
+	backCtx.strokeStyle = "white";
+	backCtx.strokeRect(x*cell_width, y*cell_width, cell_width, cell_width);
 }
 
 function check_collision(x, y, array)
