@@ -64,9 +64,6 @@ function update(elapsedTime) {
 	else if(input.right) nx += 1;
 	else if(input.left) nx -= 1;
 
-  frontCtx.fillStyle = "red";
-	frontCtx.fillRect(nx,ny,5,5);
-
   // TODO: Determine if the snake has moved out-of-bounds (offscreen)
   if(nx >= frontBuffer.width && ny >= frontBuffer.height && nx < 0 && ny < 0)
   {
