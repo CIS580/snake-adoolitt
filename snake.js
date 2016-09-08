@@ -73,7 +73,7 @@ function update(elapsedTime) {
   // TODO: Determine if the snake has eaten an apple
   if(nx == food.x && ny == food.y)
 		{
-			score++;
+			score += 10;
       growSnake = true;
 		}
     else
@@ -222,7 +222,7 @@ function create_snake()
 function create_food()
 {
 	food = {
-		x: Math.round(Math.random()*(frontBuffer.weidth-cell_width)),
+		x: Math.round(Math.random()*(frontBuffer.width-cell_width)),
 		y: Math.round(Math.random()*(frontBuffer.height-cell_width)),
 	};
 	//This will create a cell with x/y between 0-the width of canvas
