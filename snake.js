@@ -83,7 +83,8 @@ function update(elapsedTime) {
     // TODO: Grow the snake periodically
     if(growSnake)
     {
-      var tail = {x: x, y: y};
+      console.log("We made it in growsnake");
+      var tail = {x: nx, y: ny};
       growSnake = false;
     }
 
@@ -119,8 +120,7 @@ function render(elapsedTime) {
 	}
 
 	//Lets paint the food
-  backCtx.fillStyle = "blue";
-	backCtx.fillRect(food.x, food.y, cell_width, cell_width);
+  paint_cell(food.x,food.y);
 	//Lets paint the score
 	var score_text = "Score: " + score;
 	backCtx.fillText(score_text, 5, backBuffer.height - 5);
@@ -226,8 +226,8 @@ function create_snake()
 function create_food()
 {
 	food = {
-		x: Math.round(Math.random()*(frontBuffer.width-cell_width)),
-		y: Math.round(Math.random()*(frontBuffer.height-cell_width)),
+		x: Math.round(Math.random()*((frontBuffer.width-cell_width) / cell_width)),
+		y: Math.round(Math.random()*((frontBuffer.height-cell_width) / cell_width)),
 	};
   console.log("Food is being created")
   console.log(food.x);
