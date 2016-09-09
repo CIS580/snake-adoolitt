@@ -7,7 +7,6 @@ backBuffer.height = frontBuffer.height;
 var backCtx = backBuffer.getContext('2d');
 var oldTime = performance.now();
 
-var periodicall_Timer = 0;
 var growSnake = false;
 var speed = 1/16/1000;
 var cell_width = 10;
@@ -15,7 +14,8 @@ var score = 0;
 var snake_array;
 var food;
 var d = "right";
-var gameOver = false
+var gameOver = false;
+var gameOver_text = "Game Over";
 
 /**
  * @function loop
@@ -23,7 +23,6 @@ var gameOver = false
  * @param{time} the current time as a DOMHighResTimeStamp
  */
 function loop(newTime) {
-  console.log("gameover", gameOver);
   if(!gameOver)
   {
     var elapsedTime = newTime - oldTime;
@@ -48,18 +47,11 @@ function loop(newTime) {
  * the number of milliseconds passed since the last frame.
  */
 function update(elapsedTime) {
-  console.log("update");
-  periodicall_Timer += elapsedTime;
 
   var nx = snake_array[0].x;
   var ny = snake_array[0].y;
 
   // TODO: Spawn an apple periodically
-  if(periodicall_Timer >= 30000)
-  {
-    create_food();
-    periodicall_Timer = 0;
-  }
   // TODO: Move the snake
   switch(d) {
     case "up": ny -= 1; break;
@@ -71,18 +63,19 @@ function update(elapsedTime) {
   // TODO: Determine if the snake has moved out-of-bounds (offscreen)
   if(nx >= frontBuffer.width / 10 || ny >= frontBuffer.height / 10 || nx < 0 || ny < 0)
   {
-    console.log("out of bounds");
+    console.log(gameOver_text);
     gameOver = true;
   }
   // TODO: Determine if the snake has eaten an apple
-  if(nx == food.x && ny == food.y)
+  if(nx == food.x && ny == food.y )
 	{
+    console.log("Food was eaten");
+    create_food();
 		score += 10;
     growSnake = true;
 	}
   else
   {
-    console.log("moving");
     var tail = snake_array.pop(); //pops out the last cell
     tail.x = nx; tail.y = ny;
   }
@@ -98,7 +91,6 @@ function update(elapsedTime) {
   // TODO: Determine if the snake has eaten its tail
   if(check_collision(nx, ny, snake_array))
 		{
-      console.log("ate my tail");
 			//create game over
       gameOver = true;
 
@@ -124,14 +116,18 @@ function render(elapsedTime) {
 			var c = snake_array[i];
 			//Lets paint 10px wide cells
 			paint_cell(c.x, c.y);
-      console.log(c);
 	}
 
 	//Lets paint the food
-	paint_cell(food.x, food.y);
+  backCtx.fillStyle = "blue";
+	backCtx.fillRect(food.x, food.y, cell_width, cell_width);
 	//Lets paint the score
 	var score_text = "Score: " + score;
 	backCtx.fillText(score_text, 5, backBuffer.height - 5);
+  if(gameOver)
+  {
+    backCtx.fillText(gameOver_text, backBuffer.width /2 , backBuffer.height / 2);
+  }
 }
 
 
@@ -233,6 +229,9 @@ function create_food()
 		x: Math.round(Math.random()*(frontBuffer.width-cell_width)),
 		y: Math.round(Math.random()*(frontBuffer.height-cell_width)),
 	};
+  console.log("Food is being created")
+  console.log(food.x);
+  console.log(food.y);
 	//This will create a cell with x/y between 0-the width of canvas
 }
 
@@ -241,8 +240,6 @@ function paint_cell(x, y)
 {
 	backCtx.fillStyle = "blue";
 	backCtx.fillRect(x*cell_width, y*cell_width, cell_width, cell_width);
-	//backCtx.strokeStyle = "white";
-	//backCtx.strokeRect(x*cell_width, y*cell_width, cell_width, cell_width);
 }
 
 function check_collision(x, y, array)
@@ -257,9 +254,8 @@ function check_collision(x, y, array)
 	return false;
 }
 
-  create_food();
   create_snake();
-
+  create_food();
 
 
 /* Launch the game */
